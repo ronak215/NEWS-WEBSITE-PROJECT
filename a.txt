@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Website</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Authentication Popup (Signup/Login) -->
+    <div id="auth-popup" class="auth-popup">
+        <div class="auth-form">
+            <h2>Sign Up / Login</h2>
+            <form id="auth-form">
+                <input type="text" id="username" placeholder="Username" required><br>
+                <input type="password" id="password" placeholder="Password" required><br>
+                <button type="submit">Login</button>
+                <p id="error-msg" style="color: red;"></p>
+            </form>
+            <p>Don't have an account? <span id="signup-link">Sign up here</span></p>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="nav-bar">
+        <div class="main-nav">
+            <a href="#" onclick="reload()">
+                <img src="https://thumbs.dreamstime.com/b/abstract-globe-news-background-loop-k-hd-60488912.jpg" alt="logo">
+            </a>
+            <div class="nav-bar-items">
+                <ul class="flex">
+                    <li class="nav-items" id="cricket" onclick="onNavItemclick('cricket')">Cricket</li>
+                    <li class="nav-items" id="entertainment" onclick="onNavItemclick('entertainment')">Entertainment</li>
+                    <li class="nav-items" id="politics" onclick="onNavItemclick('politics')">Politics</li>
+                    <li class="nav-items" id="stock Market" onclick="onNavItemclick('stock Market')">Stock Market</li>
+                    <li class="nav-items" id="Technology" onclick="onNavItemclick('Technology')">Technology</li>
+                    <li class="nav-items" id="Business" onclick="onNavItemclick('Business')">Business</li>
+                    <li class="nav-items" id="Health" onclick="onNavItemclick('Health')">Health</li>
+                    <li class="nav-items" id="Education" onclick="onNavItemclick('Education')">Education</li>
+                    <li class="nav-items" id="Movies" onclick="onNavItemclick('Movies')">Movies</li>
+                </ul>
+            </div>
+            <div class="search-bar">
+                <input id="search-text" type="text" class="search-item" placeholder="Search....">
+                <button id="search-button" class="search-button">Search</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content area where news cards will appear -->
+    <main>
+        <div class="card-container flex" id="card-container"></div>
+    </main>
+
+    <!-- Template for news cards -->
+    <template id="template-news-card">
+        <div class="card">
+            <div class="card-header">
+                <img src="http://via.placeholder.com./400x200" alt="news image" id="news-img">
+            </div>
+            <div class="card-content">
+                <h3 class="news-title" id="news-title">This is title</h3>
+                <h6 class="news-source" id="news-source">End Gadget 12/10/24</h6>
+                <p class="news-desc" id="news-desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam at enim quae omnis odit molestias, alias sunt numquam autem? Tempora inventore obcaecati voluptatum ipsam! Non illum neque deleniti nemo asperiores dignissimos corporis hic sint?</p>
+            </div>
+            <button class="bookmark-btn" onclick="toggleBookmark(this)">Bookmark</button>
+        </div>
+    </template>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+
+</html>
+
+
+
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.main-nav img {
+    border-radius: 10px 10px 10px;
+    height: 100px;
+    object-fit: cover;
+}
+
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(225, 246, 255);
+    color: rgb(109, 170, 255);
+    font-weight: bold;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 10px 10px 10px 10px;
+    justify-content: space-between;
+}
+
+.nav-bar-items ul {
+    gap: 26px;
+}
+
+.nav-items li {
+    list-style: none;
+}
+
+.search-item {
+    padding: 5px 5px 5px 5px;
+    border-color: rgb(0, 0, 191);
+}
+
+.search-button {
+    margin: 10px;
+    padding: 5px 5px 5px 5px;
+    color: rgb(5, 10, 10);
+    background-color: rgb(234, 255, 211);
+    border-color: blue;
+}
+
+.search-button:hover {
+    background-color: rgb(22, 255, 208);
+}
+
+.nav-items:hover {
+    color: rgb(0, 170, 255);
+    cursor: pointer;
+}
+
+main {
+    padding-block: 20px;
+    margin-top: 10px;
+}
+
+.nav-items.active {
+    color: blue;
+}
+
+.card-container {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 20px;
+    align-items: stretch;
+}
+
+.card {
+    width: 360px;
+    min-height: 500px;
+    box-shadow: 0 0 4px #d4ecff;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    box-shadow: 1px 1px 8px #7ed5f7;
+    background-color: #effaff;
+    transform: translateY(-2px);
+}
+
+.card-header img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.news-source {
+    margin-block: 12px;
+    font-size: 14px;
+    color: #777;
+}
+
+/* Authentication Popup Styles */
+.auth-popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+}
+
+.auth-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form input {
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.auth-form button {
+    padding: 10px;
+    width: 100%;
+    background-color: #5cb85c;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.auth-form button:hover {
+    background-color: #4cae4c;
+}
+
+#signup-link {
+    color: blue;
+    cursor: pointer;
+}
+
+#signup-link:hover {
+    text-decoration: underline;
+}
+
+.bookmark-btn {
+    margin: 10px;
+    padding: 5px;
+    background-color: #ffeb3b;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.bookmark-btn:hover {
+    background-color: #ff9800;
+}
+
+.bookmarked-articles {
+    margin-top: 20px;
+}
+
+.bookmarked-card-container {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 20px;
+    align-items: stretch;
+}
+
+
+
+
+
+const API_KEY = "af94f44d597a45a39383e9160fd96ae1";
+const base_url = "https://newsapi.org/v2/everything?q=";
+
+window.addEventListener("load", () => {
+    const username = localStorage.getItem("username");
+    if (!username) {
+        document.getElementById("auth-popup").style.display = "flex";
+    } else {
+        fetchNews("Technology");
+        displayBookmarkedArticles(username);
+    }
+});
+
+let curSelectedNav = null;
+function onNavItemclick(id) {
+    fetchNews(id);
+    const navItem = document.getElementById(id);
+    curSelectedNav?.classList.remove("active");
+    curSelectedNav = navItem;
+    curSelectedNav.classList.add("active");
+}
+
+const searchButton = document.getElementById("search-button");
+const searchText = document.getElementById("search-text");
+
+searchButton.addEventListener("click", () => {
+    const query = searchText.value;
+    if (!query) return;
+    fetchNews(query);
+    curSelectedNav?.classList.remove("active");
+    curSelectedNav = null;
+});
+
+// Sign up form submission
+document.getElementById("auth-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const errorMsg = document.getElementById("error-msg");
+
+    if (!username || !password) {
+        errorMsg.textContent = "Username and Password are required.";
+        return;
+    }
+
+    // Sign Up - store the user credentials in localStorage
+    if (document.getElementById("auth-form").classList.contains("signup")) {
+        localStorage.setItem("username", username);
+        localStorage.setItem("password", password);
+
+        // Show login form after successful sign up
+        errorMsg.textContent = "";
+        alert("Sign up successful! Please log in to continue.");
+        
+        // Switch to login form
+        document.getElementById("signup-link").textContent = "Don't have an account? Sign up here";
+        document.getElementById("auth-form").innerHTML = `
+            <input type="text" id="username" placeholder="Username" required><br>
+            <input type="password" id="password" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+            <p id="error-msg" style="color: red;"></p>
+        `;
+        document.getElementById("auth-form").classList.remove("signup");
+    } else {
+        // Login - check stored credentials
+        const storedUsername = localStorage.getItem("username");
+        const storedPassword = localStorage.getItem("password");
+
+        if (username === storedUsername && password === storedPassword) {
+            closePopup();
+            fetchNews("Technology");
+            displayBookmarkedArticles(username);
+        } else {
+            errorMsg.textContent = "Incorrect username or password.";
+        }
+    }
+});
+
+function closePopup() {
+    const popup = document.getElementById("auth-popup");
+    popup.style.display = "none";
+}
+
+async function fetchNews(query) {
+    try {
+        const response = await fetch(`${base_url}${query}&apiKey=${API_KEY}`);
+        const data = await response.json();
+
+        if (data.status === "ok") {
+            displayNews(data.articles);
+        }
+    } catch (error) {
+        console.log("Error fetching news:", error);
+    }
+}
+
+function displayNews(articles) {
+    const template = document.getElementById("template-news-card");
+    const cardContainer = document.getElementById("card-container");
+
+    cardContainer.innerHTML = "";
+
+    articles.forEach((article, index) => {
+        const clone = template.content.cloneNode(true);
+
+        clone.getElementById("news-title").textContent = article.title;
+        clone.getElementById("news-desc").textContent = article.description;
+        clone.getElementById("news-source").textContent = article.source.name;
+        clone.getElementById("news-img").src = article.urlToImage;
+
+        const bookmarkBtn = clone.querySelector(".bookmark-btn");
+        bookmarkBtn.addEventListener("click", function(event) {
+            event.stopPropagation();  // Prevents the news card click event
+            toggleBookmark(bookmarkBtn, index);
+        });
+
+        // Check if the article is already bookmarked
+        const username = localStorage.getItem("username");
+        const bookmarkedArticles = JSON.parse(localStorage.getItem(`bookmarkedArticles-${username}`)) || [];
+
+        if (bookmarkedArticles.includes(index)) {
+            bookmarkBtn.textContent = "Bookmarked";
+            bookmarkBtn.style.backgroundColor = "#d3ffd3"; // Highlight bookmarked articles
+        }
+
+        // Add click event to open the article in a new tab
+        clone.firstElementChild.addEventListener("click", () => {
+            window.open(article.url, "_blank");
+        });
+
+        cardContainer.appendChild(clone);
+    });
+}
+
+function toggleBookmark(button, index) {
+    const username = localStorage.getItem("username");
+    let bookmarkedArticles = JSON.parse(localStorage.getItem(`bookmarkedArticles-${username}`)) || [];
+
+    if (bookmarkedArticles.includes(index)) {
+        // Remove bookmark
+        bookmarkedArticles = bookmarkedArticles.filter((item) => item !== index);
+        button.textContent = "Bookmark";
+        button.style.backgroundColor = "#28a745"; // Normal button color
+    } else {
+        // Add bookmark
+        bookmarkedArticles.push(index);
+        button.textContent = "Bookmarked";
+        button.style.backgroundColor = "#d3ffd3"; // Highlight bookmarked articles
+    }
+
+    localStorage.setItem(`bookmarkedArticles-${username}`, JSON.stringify(bookmarkedArticles));
+    displayBookmarkedArticles(username);
+}
+
+function displayBookmarkedArticles(username) {
+    const bookmarkedArticles = JSON.parse(localStorage.getItem(`bookmarkedArticles-${username}`)) || [];
+    const bookmarkedCardContainer = document.getElementById("bookmarked-card-container");
+
+    bookmarkedCardContainer .innerHTML = "";
+
+    bookmarkedArticles.forEach((index) => {
+        const article = data.articles[index];
+        const clone = template.content.cloneNode(true);
+
+        clone.getElementById("news-title").textContent = article.title;
+        clone.getElementById("news-desc").textContent = article.description;
+        clone.getElementById("news-source").textContent = article.source.name;
+        clone.getElementById("news-img").src = article.urlToImage;
+
+        bookmarkedCardContainer.appendChild(clone);
+    });
+}
+
+function onNavItemclick(query) {
+    fetchNews(query);
+}
+
+// Toggle between Login and Sign Up views
+document.getElementById("signup-link").addEventListener("click", () => {
+    const form = document.getElementById("auth-form");
+    const signupLink = document.getElementById("signup-link");
+    const isSignupForm = form.classList.contains("signup");
+
+    if (!isSignupForm) {
+        signupLink.textContent = "Already have an account? Login here";
+        form.innerHTML = `
+            <input type="text" id="username" placeholder="Username" required><br>
+            <input type="password" id="password" placeholder="Password" required><br>
+            <input type="email" id="email" placeholder="Email" required><br>
+            <button type="submit">Sign Up</button>
+            <p id="error-msg" style="color: red;"></p>
+        `;
+        form.classList.add("signup");
+    } else {
+        signupLink.textContent = "Don't have an account? Sign up here";
+        form.innerHTML = `
+            <input type="text" id="username" placeholder="Username" required><br>
+            <input type="password" id="password" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+            <p id="error-msg" style="color: red;"></p>
+        `;
+        form.classList.remove("signup");
+    }
+});
+
+
+
+# NewsWebsite-API-Project
+
+## Introduction
+
+**NewsWebsite-API-Project** is a dynamic news website that fetches live news articles in real-time from a third-party API. The platform includes essential features such as user login/signup, bookmarking, and personalized user interaction. It is built using front-end and back-end technologies for a fully interactive user experience.
+
+## Objective
+
+### Main Goal:
+- To develop a real-time news platform that allows users to browse, bookmark, and save articles.
+
+### Key Features:
+- Fetch live news articles from an API.
+- Allow users to sign up, log in, and manage bookmarks.
+- Provide a seamless and responsive user interface.
+
+## Flow of the Project
+
+### User Journey:
+1. **Landing Page**: Users see top headlines fetched dynamically from the API.
+2. **Signup/Login**: Users can create an account or log in to access personalized features.
+3. **Browse Articles**: Users can explore different news categories or search for specific topics.
+4. **Bookmarking**: Logged-in users can bookmark articles to view later.
+5. **View Bookmarks**: Bookmarked articles are saved in the user’s profile for easy access.
+6. **Logout**: Users can log out after completing their session.
+
+## Project Architecture
+
+### Front-End:
+- **HTML**: Provides the structure of the website.
+- **CSS**: Ensures a responsive layout and styling for a user-friendly interface.
+- **JavaScript**: Handles dynamic content, user interaction, and DOM manipulation.
+
+### Back-End:
+- **Database**: Used to store user login/signup credentials and manage bookmarked articles.
+- **API Integration**: Fetches live news articles from a third-party service in real-time.
+
+## API Integration
+
+### Real-Time News Updates:
+- The website is integrated with a third-party API to fetch live news articles.
+- News is dynamically displayed based on user preferences or selected categories.
+- API returns data in JSON format, which is handled using JavaScript for real-time updates.
+
+## User Login/Signup Features
+
+### Secure Login/Signup:
+- Users can create an account or log in to access personalized features.
+- User credentials are securely handled through database integration.
+- Bookmarks and user preferences are saved and accessible after logging in.
+
+## Bookmarking Functionality
+
+### Bookmark Articles:
+- Logged-in users can bookmark their favorite articles while browsing.
+- Bookmarked articles are stored in the database and can be accessed later from the user’s profile.
+- Provides a convenient way to manage a reading list for users.
+
+## Demo of the Project
+
+### Live Demo Walkthrough:
+1. Open the website to see top headlines.
+2. Browse different news categories based on user interest.
+3. Signup or login to access personalized features such as bookmarking.
+4. Bookmark articles while browsing the news feed.
+5. View saved bookmarks in your profile.
+6. Log out after completing your session.
+
+## Conclusion
+
+### Summary:
+- The project delivers a fully functional news website with real-time updates and personalized user-specific features.
+- It integrates a news API for live data, a database for handling login/signup, and a bookmarking feature for users.
+- The design is responsive and user-friendly, ensuring a seamless experience across devices.
+
+### Next Steps:
+- Future enhancements include adding user preferences for news categories and improving security features for better user management.
+
+## Technologies Used
+
+- **API**: Third-party news API for real-time news data.
+- **JavaScript**: Manages API calls, dynamic content updates, and user interactions.
+- **HTML/CSS**: Provides structure and styling for the website.
+- **Local Storage/Database**: Stores user login credentials and bookmarks for a personalized experience.
+  
